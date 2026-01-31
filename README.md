@@ -27,6 +27,9 @@ npm install
 cp .env.example .env
 # Edit .env with your database URL
 
+# Generate PrismaClient into node_modules
+npx prisma generate
+
 # Run database migrations
 npx prisma migrate dev
 

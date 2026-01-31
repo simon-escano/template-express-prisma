@@ -274,6 +274,91 @@ npx prisma studio
 
 ---
 
+## Switching Database Providers
+
+One of the key benefits of using Prisma is easy migration between database providers. Here's how to switch:
+
+### Switching PostgreSQL Hosts (Easiest)
+
+To move between PostgreSQL providers (self-hosted → Supabase → AWS RDS → Neon), you only need to change one thing:
+
+1. Update `DATABASE_URL` in `.env` with the new connection string
+2. Run `npx prisma migrate deploy` (production) or `npx prisma migrate dev` (development)
+3. Done! Your code doesn't change at all.
+
+| Provider | DATABASE_URL Format |
+|----------|---------------------|
+| Self-hosted | `postgresql://user:pass@localhost:5432/mydb` |
+| Supabase | `postgresql://postgres.[ref]:[pass]@aws-0-[region].pooler.supabase.com:6543/postgres` |
+| AWS RDS | `postgresql://user:pass@mydb.xxx.us-east-1.rds.amazonaws.com:5432/mydb` |
+| Neon | `postgresql://user:pass@ep-xxx.us-east-1.aws.neon.tech/mydb?sslmode=require` |
+| Railway | `postgresql://postgres:pass@containers-xxx.railway.app:5432/railway` |
+
+### Switching Database Types (e.g., PostgreSQL → MySQL)
+
+Prisma 7 uses driver adapters, so switching database types requires changing both the adapter and schema:
+
+**Step 1: Install the new adapter**
+
+```bash
+# For MySQL
+npm install @prisma/adapter-mysql mysql2
+
+# For SQLite
+npm install @prisma/adapter-better-sqlite3 better-sqlite3
+```
+
+**Step 2: Update `src/config/prisma.ts`**
+
+```typescript
+// For MySQL:
+import { PrismaMySQL } from '@prisma/adapter-mysql';
+import mysql from 'mysql2/promise';
+
+const pool = mysql.createPool(process.env.DATABASE_URL!);
+const adapter = new PrismaMySQL(pool);
+const prisma = new PrismaClient({ adapter });
+
+// For SQLite:
+import { PrismaBetterSQLite3 } from '@prisma/adapter-better-sqlite3';
+import Database from 'better-sqlite3';
+
+const database = new Database('mydb.sqlite');
+const adapter = new PrismaBetterSQLite3(database);
+const prisma = new PrismaClient({ adapter });
+```
+
+**Step 3: Update `prisma/schema.prisma`**
+
+```prisma
+datasource db {
+  provider = "mysql"  // or "sqlite"
+}
+```
+
+**Step 4: Update `prisma.config.ts`**
+
+```typescript
+export default defineConfig({
+  schema: 'prisma/schema.prisma',
+  datasource: {
+    url: env('DATABASE_URL'),  // Update connection string format
+  },
+})
+```
+
+**Step 5: Regenerate and migrate**
+
+```bash
+npx prisma generate
+npx prisma migrate dev --name switch_to_mysql
+```
+
+> [!NOTE]
+> When switching database types, you may need to adjust your schema for database-specific features (e.g., MySQL doesn't support arrays, SQLite has limited types).
+
+---
+
 ## Adding New Features
 
 ### Creating a New Resource (e.g., Posts)

@@ -19,7 +19,7 @@ A production-ready Express.js backend template with TypeScript and Prisma ORM, f
 
 ```bash
 # Clone and install
-git clone <your-repo-url>
+git clone https://github.com/simon-escano/template-express-prisma.git
 cd express-prisma
 npm install
 

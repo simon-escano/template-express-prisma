@@ -1,0 +1,36 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "dev": "nodemon --watch 'src/**/*.ts' --exec 'ts-node' src/server.ts",
+    "lint": "eslint 'src/**/*.ts'",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "devDependencies": {
+    "@prisma/adapter-pg": "^7.3.0",
+    "@prisma/client": "^7.3.0",
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.1.0",
+    "@types/pg": "^8.16.0",
+    "dotenv": "^17.2.3",
+    "eslint": "^9.39.2",
+    "express": "^5.2.1",
+    "install": "^0.13.0",
+    "nodemon": "^3.1.11",
+    "prettier": "^3.8.1",
+    "prisma": "^7.3.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "pg": "^8.18.0"
+  }
+}
